@@ -4,6 +4,8 @@ class Game {
     this.wordElement = container.querySelector('.word');
     this.winsElement = container.querySelector('.status__wins');
     this.lossElement = container.querySelector('.status__loss');
+    this.timeElement = container.querySelector(".status__time");
+    this.timerId = null;
 
     this.reset();
 
@@ -25,7 +27,18 @@ class Game {
       При неправильном вводе символа - this.fail();
       DOM-элемент текущего символа находится в свойстве this.currentSymbol.
      */
-  }
+    document.addEventListener("keyup", (event) => {
+      if (["Shift", "Control", "Alt"].includes(event.key)) {
+        return;
+      };
+      let key = (event.key).toLowerCase();
+      if (key === this.currentSymbol.textContent.toLowerCase()) {
+        this.success();
+      } else {
+        this.fail();
+      };
+    });
+  };
 
   success() {
     if(this.currentSymbol.classList.contains("symbol_current")) this.currentSymbol.classList.remove("symbol_current");
@@ -56,21 +69,34 @@ class Game {
     const word = this.getWord();
 
     this.renderWord(word);
+
+    // Таймер обратного отсчёта
+    if (this.timerId) {
+      clearInterval(this.timerId);
+    };
+    this.timeElement.textContent = word.length;
+    this.timerId = setInterval( () => {
+      if (this.timeElement.textContent > 0) {
+        this.timeElement.textContent--;
+      } else {
+        this.fail()
+      };
+    }, 1000);
   }
 
   getWord() {
     const words = [
-        'bob',
-        'awesome',
-        'netology',
-        'hello',
-        'kitty',
-        'rock',
-        'youtube',
-        'popcorn',
-        'cinema',
-        'love',
-        'javascript'
+        'Слово bob',
+        'Слово awesome',
+        'слово netology',
+        'Слово hello',
+        'слово kitty',
+        'слово rock',
+        'Слово youtube',
+        'слово popcorn',
+        'Слово cinema',
+        'слово love',
+        'слово javascript'
       ],
       index = Math.floor(Math.random() * words.length);
 
@@ -91,4 +117,3 @@ class Game {
 }
 
 new Game(document.getElementById('game'))
-
